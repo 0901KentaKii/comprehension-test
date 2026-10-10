@@ -24,10 +24,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # 送信先 (VITE_GAS_ENDPOINT) は、リポジトリに含めている .env.production から読み込まれる
       - run: npm run build
-        env:
-          # リポジトリの Settings > Secrets and variables > Actions > Variables に登録する
-          VITE_GAS_ENDPOINT: ${{ vars.VITE_GAS_ENDPOINT }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

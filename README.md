@@ -93,7 +93,8 @@ const SPREADSHEET_ID = '1AbC...xyz';
 VITE_GAS_ENDPOINT=https://script.google.com/macros/s/xxxxxxxx/exec
 ```
 
-- `.env` は Git に含めない設定(`.gitignore`)になっています。
+- `.env` はローカル専用で、Git に含めない設定(`.gitignore`)になっています。
+- 公開版(本番ビルド)用の URL は `.env.production` に書きます。こちらは Git で管理します(手順 11)。
 - `VITE_` で始まる値はビルド後の JavaScript に埋め込まれ、誰でも見ることができます。**パスワードや秘密鍵などは絶対に入れないでください。**
 - 未設定の場合は「デモ送信」となり、提出してもスプレッドシートには保存されません(デザイン確認用)。
 
@@ -124,9 +125,7 @@ git push -u origin main
 `main` に Push すると自動でビルド・公開する設定([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml))を同梱しています。
 
 1. リポジトリの **Settings > Pages** を開き、**Source** を **GitHub Actions** にします。
-2. **Settings > Secrets and variables > Actions > Variables** タブで **New repository variable** を押し、次を登録します。
-   - Name: `VITE_GAS_ENDPOINT`
-   - Value: 手順 7 の Web アプリ URL
+2. プロジェクト直下の `.env.production` の `VITE_GAS_ENDPOINT` に、手順 7 の Web アプリ URL を設定してコミットします。公開版(本番ビルド)の送信先はこのファイルから読み込まれます。
 3. **Actions** タブで `Deploy to GitHub Pages` を **Run workflow**(または `main` に Push)します。
 4. 完了すると `https://<ユーザー名>.github.io/<リポジトリ名>/` で公開されます。
 
