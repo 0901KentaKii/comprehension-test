@@ -55,8 +55,6 @@ function range_(from, to) {
 
 /** 回答の受付 */
 function doPost(e) {
-  // Apps Script がリクエストを受け取った時刻 (端末の時計に依存しない)
-  const serverReceivedAt = new Date();
   try {
     const data = validate_(parseRequest_(e));
 
@@ -70,7 +68,7 @@ function doPost(e) {
         return json_({ ok: true, duplicate: true });
       }
       const score = grade_(data.answers, loadAnswerKey_(sheet.getParent()));
-      appendAttempt_(sheet, data, score, serverReceivedAt);
+      appendAttempt_(sheet, data, score);
       SpreadsheetApp.flush();
       return json_({ ok: true, duplicate: false });
     } finally {
@@ -106,6 +104,24 @@ function setup() {
   const count = key ? Object.keys(key).length : 0;
   console.log('準備ができました: ' + ss.getUrl());
   console.log('「正解」シートに登録されている問題数: ' + count + ' / ' + CHOICE_QUESTION_IDS.length);
+}
+
+/**
+ * 「回答」シートを新しい列構成で作り直す。エディタで手動実行します。
+ * 列の構成を変えたあとや、古い形式の列が混ざってしまったときに使います。
+ * 今ある「回答」シートは削除せず、「回答_旧_日時」という名前に変えて残します。
+ */
+function rebuildAnswerSheet() {
+  const ss = getSpreadsheet_();
+  const old = ss.getSheetByName(SHEET_NAME);
+  if (old) {
+    const backupName = SHEET_NAME + '_旧_' + Utilities.formatDate(new Date(), TIME_ZONE, 'yyyyMMdd_HHmmss');
+    old.setName(backupName);
+    console.log('これまでの「' + SHEET_NAME + '」シートは「' + backupName + '」として残しました');
+  }
+  const sheet = getSheet_();
+  ensureHeaders_(sheet, buildHeaders_());
+  console.log('新しい「' + SHEET_NAME + '」シートを作成しました: ' + ss.getUrl());
 }
 
 // ============================== 処理 ==============================
@@ -175,18 +191,26 @@ function date_(value, name) {
   return d;
 }
 
-function getSheet_() {
+function getSpreadsheet_() {
   const ss = SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
   if (!ss) throw new Error('Spreadsheet が見つかりません。SPREADSHEET_ID を設定してください');
+  return ss;
+}
+
+function getSheet_() {
+  const ss = getSpreadsheet_();
   return ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
 }
 
-/** 同じ attemptId が登録済みか (A列を完全一致で検索) */
+/** 同じ attemptId が登録済みか (見出しが attemptId の列を完全一致で検索) */
 function attemptExists_(sheet, attemptId) {
   const lastRow = sheet.getLastRow();
-  if (lastRow < 2) return false;
+  const lastColumn = sheet.getLastColumn();
+  if (lastRow < 2 || lastColumn < 1) return false;
+  const column = sheet.getRange(1, 1, 1, lastColumn).getValues()[0].map(String).indexOf(ATTEMPT_ID_HEADER) + 1;
+  if (column < 1) return false;
   const found = sheet
-    .getRange(2, 1, lastRow - 1, 1)
+    .getRange(2, column, lastRow - 1, 1)
     .createTextFinder(attemptId)
     .matchEntireCell(true)
     .matchCase(true)
@@ -240,18 +264,20 @@ function grade_(answers, key) {
   return result;
 }
 
+/**
+ * 二重登録の防止に使う受験ごとの識別子の列。
+ * 確認者が見る必要はないので、右端に置いて非表示にする (削除すると二重登録を防げなくなる)。
+ */
+const ATTEMPT_ID_HEADER = 'attemptId';
+
 const BASE_HEADERS = [
-  'attemptId',
   '氏名',
   '開始日時',
   '基準終了日時',
-  '提出日時(端末)',
-  '受信日時(サーバー)',
+  '提出日時',
   '所要時間',
-  '所要時間(秒)',
   '時間超過',
   '超過時間',
-  '超過時間(秒)',
   '選択式回答数',
   '記述式回答数',
   '正解数',
@@ -268,7 +294,9 @@ const textHeader_ = function (id, i) {
 };
 
 function buildHeaders_() {
-  return BASE_HEADERS.concat(CHOICE_QUESTION_IDS.map(choiceHeader_), TEXT_QUESTION_IDS.map(textHeader_));
+  return BASE_HEADERS.concat(CHOICE_QUESTION_IDS.map(choiceHeader_), TEXT_QUESTION_IDS.map(textHeader_), [
+    ATTEMPT_ID_HEADER,
+  ]);
 }
 
 /**
@@ -291,6 +319,9 @@ function ensureHeaders_(sheet, wanted) {
       .setFontWeight('bold')
       .setBackground('#eef1f5');
     if (current.length === 0) sheet.setFrozenRows(1);
+    // 識別子の列を新しく作った場合は非表示にする
+    const idIndex = missing.indexOf(ATTEMPT_ID_HEADER);
+    if (idIndex !== -1) sheet.hideColumns(current.length + 1 + idIndex);
   }
   return current.concat(missing);
 }
@@ -311,24 +342,21 @@ function safeText_(value) {
 }
 
 /** 1受験分を1行として追加する */
-function appendAttempt_(sheet, d, score, serverReceivedAt) {
+function appendAttempt_(sheet, d, score) {
   // 時間は端末から届いた開始・基準終了・提出日時からサーバー側で計算し直す
   const durationSeconds = Math.floor((d.submittedAt - d.startedAt) / 1000);
   const overtimeSeconds = Math.max(0, Math.floor((d.submittedAt - d.targetEndAt) / 1000));
 
   const row = {
-    'attemptId': d.attemptId,
     '氏名': safeText_(d.userName),
     '開始日時': formatDate_(d.startedAt),
     '基準終了日時': formatDate_(d.targetEndAt),
-    '提出日時(端末)': formatDate_(d.submittedAt),
-    '受信日時(サーバー)': formatDate_(serverReceivedAt),
+    '提出日時': formatDate_(d.submittedAt),
     '所要時間': formatDuration_(durationSeconds),
-    '所要時間(秒)': durationSeconds,
     '時間超過': overtimeSeconds > 0 ? 'あり' : 'なし',
     '超過時間': formatDuration_(overtimeSeconds),
-    '超過時間(秒)': overtimeSeconds,
   };
+  row[ATTEMPT_ID_HEADER] = d.attemptId;
   // 見出し → 背景色 (選択式: 不正解は薄い赤、未回答は薄い灰色)
   const colors = {};
   colors['時間超過'] = overtimeSeconds > 0 ? '#fde9e7' : null;
@@ -362,7 +390,7 @@ function appendAttempt_(sheet, d, score, serverReceivedAt) {
   }
 
   const headers = ensureHeaders_(sheet, buildHeaders_());
-  const numeric = { '所要時間(秒)': '0', '超過時間(秒)': '0', '正解数': '0', '選択式得点': '0', '選択式満点': '0' };
+  const numeric = { '正解数': '0', '選択式得点': '0', '選択式満点': '0' };
   const values = headers.map(function (h) {
     return row.hasOwnProperty(h) ? row[h] : '';
   });

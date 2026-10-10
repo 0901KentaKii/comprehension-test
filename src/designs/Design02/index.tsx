@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "../../components/common/Icons";
 import { Progress } from "../../components/Progress";
-import { QuestionNav } from "../../components/QuestionNav";
+import { QuestionNavToggle } from "../../components/QuestionNavToggle";
 import { Timer } from "../../components/Timer";
 import { QuestionView, questionTypeLabel } from "../../components/questions/QuestionView";
 import type { DesignKit, FrameProps, TestScreenProps } from "../types";
@@ -39,10 +39,7 @@ function TestScreen(props: TestScreenProps) {
           </div>
           <Progress value={currentIndex + 1} max={stats.total} label="問題の進捗" />
           {/* 問題数が多いので、一覧は必要なときだけ開く */}
-          <details className="d2-list">
-            <summary>問題一覧を開く(問題を選んで移動)</summary>
-            <QuestionNav questions={questions} answers={answers} currentIndex={currentIndex} onJump={props.onJump} />
-          </details>
+          <QuestionNavToggle questions={questions} answers={answers} currentIndex={currentIndex} onJump={props.onJump} />
         </div>
 
         <main className="d2-card">

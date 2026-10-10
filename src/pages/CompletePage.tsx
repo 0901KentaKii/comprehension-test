@@ -57,12 +57,6 @@ export function CompletePage({ design, result, back, onRestart }: Props) {
           </p>
         )}
 
-        <p className="complete-close">
-          この端末から氏名と回答は消去されました。この画面は閉じて構いません。
-          <br />
-          続けて別の方が受験する場合は、下のボタンを押してください。
-        </p>
-
         <div className="actions actions--single">
           <button type="button" className="btn" onClick={onRestart}>
             最初の画面に戻る

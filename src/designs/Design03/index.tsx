@@ -1,11 +1,11 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "../../components/common/Icons";
-import { QuestionNav } from "../../components/QuestionNav";
+import { QuestionNavToggle } from "../../components/QuestionNavToggle";
 import { Timer } from "../../components/Timer";
 import { QuestionView, questionTypeLabel } from "../../components/questions/QuestionView";
 import type { DesignKit, FrameProps, TestScreenProps } from "../types";
 import "./design03.css";
 
-/** DESIGN 03: モダン・Webサービス型。上部に問題一覧を常に表示し、全体の状況を把握しやすくする */
+/** DESIGN 03: モダン・Webサービス型。上部に回答状況と、開閉できる問題一覧を置く */
 function TestScreen(props: TestScreenProps) {
   const { title, questions, currentIndex, answers, stats, timer, back } = props;
   const question = questions[currentIndex];
@@ -31,7 +31,7 @@ function TestScreen(props: TestScreenProps) {
           <button type="button" className="btn btn--primary d3-overview__submit" onClick={props.onOpenConfirm}>
             回答を確認して提出
           </button>
-          <QuestionNav questions={questions} answers={answers} currentIndex={currentIndex} onJump={props.onJump} />
+          <QuestionNavToggle questions={questions} answers={answers} currentIndex={currentIndex} onJump={props.onJump} />
         </div>
       </section>
 
@@ -88,7 +88,7 @@ function Frame({ title, back, children }: FrameProps) {
 export const design03: DesignKit = {
   id: 3,
   name: "モダン",
-  description: "Webサービス風。上部に問題一覧を常に表示し、回答済み・未回答と現在位置を文字で確認できます。",
+  description: "Webサービス風。上部に回答状況と提出ボタンを常に表示し、問題一覧はボタンで開閉して移動できます。",
   className: "d3",
   Frame,
   TestScreen,

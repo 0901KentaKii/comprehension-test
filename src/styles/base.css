@@ -487,6 +487,48 @@ button:disabled {
   transition: width 0.3s;
 }
 
+/* ---------- 問題一覧の開閉ボタン ---------- */
+
+.qtoggle__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 4px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.qtoggle__button:hover {
+  border-color: var(--accent);
+}
+
+.qtoggle__hint {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.qtoggle__chevron {
+  transition: transform 0.2s;
+}
+
+.qtoggle.is-open .qtoggle__button {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.qtoggle.is-open .qtoggle__chevron {
+  transform: rotate(180deg);
+}
+
+.qtoggle__panel {
+  margin-top: 10px;
+}
+
 /* ---------- 問題一覧 (基本形。配置は各デザインで指定) ---------- */
 
 .qnav__item {
@@ -784,12 +826,6 @@ button.summary__jump:hover {
 
 .complete-text {
   font-size: 1.0625rem;
-}
-
-.complete-close {
-  margin-top: 24px;
-  color: var(--muted);
-  font-size: 0.9375rem;
 }
 
 /* ---------- 確認ダイアログ ---------- */
