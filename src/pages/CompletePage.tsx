@@ -3,7 +3,6 @@ import { CheckIcon } from "../components/common/Icons";
 import { testConfig } from "../config/testConfig";
 import type { DesignKit } from "../designs/types";
 import type { TestResult } from "../types/test";
-import { formatDuration } from "../utils/time";
 
 interface Props {
   design: DesignKit;
@@ -31,15 +30,6 @@ export function CompletePage({ design, result, back, onRestart }: Props) {
           <br />
           回答は正常に送信されました。
         </p>
-
-        {testConfig.showTimeSummaryOnComplete && (
-          <dl className="timeinfo timeinfo--single">
-            <div>
-              <dt>所要時間</dt>
-              <dd>{formatDuration(result.durationSeconds)}</dd>
-            </div>
-          </dl>
-        )}
 
         {result.demo && (
           <p className="demo-note">

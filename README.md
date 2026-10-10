@@ -208,7 +208,7 @@ question: [
 durationMinutes: 60,
 ```
 
-テスト名(`title`)や、完了画面に所要時間を表示するか(`showTimeSummaryOnComplete`)も同じファイルで変更できます。
+テスト名(`title`)も同じファイルで変更できます。
 
 ### 16. 正解変更方法
 
