@@ -749,6 +749,12 @@ button.summary__jump:hover {
   text-align: left;
 }
 
+/* 項目が1つだけのとき (提出完了画面の所要時間) は中央に置く */
+.timeinfo--single {
+  grid-template-columns: minmax(0, 260px);
+  justify-content: center;
+}
+
 .timeinfo .timeinfo__over {
   border-color: var(--danger);
   background: var(--danger-soft);

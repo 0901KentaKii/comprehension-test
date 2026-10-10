@@ -5,7 +5,7 @@ export const testConfig = {
   /** 設定時間(分)。目安であり、超過しても強制終了・自動提出はしない */
   durationMinutes: 60,
 
-  /** 提出完了画面に 設定時間・所要時間・超過時間 を表示するか */
+  /** 提出完了画面に 所要時間 を表示するか */
   showTimeSummaryOnComplete: true,
 
   /** 記述式問題で maxLength を指定しなかった場合の最大文字数 */

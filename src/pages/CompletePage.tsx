@@ -33,21 +33,11 @@ export function CompletePage({ design, result, back, onRestart }: Props) {
         </p>
 
         {testConfig.showTimeSummaryOnComplete && (
-          <dl className={`timeinfo${result.timeExceeded ? " timeinfo--overtime" : ""}`}>
-            <div>
-              <dt>設定時間</dt>
-              <dd>{result.durationMinutes}分</dd>
-            </div>
+          <dl className="timeinfo timeinfo--single">
             <div>
               <dt>所要時間</dt>
               <dd>{formatDuration(result.durationSeconds)}</dd>
             </div>
-            {result.timeExceeded && (
-              <div className="timeinfo__over">
-                <dt>超過時間</dt>
-                <dd>{formatDuration(result.overtimeSeconds)}</dd>
-              </div>
-            )}
           </dl>
         )}
 
