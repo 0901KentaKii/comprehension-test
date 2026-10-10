@@ -1,0 +1,346 @@
+/* DESIGN 02: カード型
+   薄いグレーの背景に白いカード。配色は白・濃いグレー・緑の3色に絞り、
+   文字と選択肢を大きくして読みやすさと押しやすさを優先する。 */
+
+.d2 {
+  --bg: #f1f3f6;
+  --surface: #ffffff;
+  --text: #111827;
+  --muted: #4b5563;
+  --border: #c5ccd6;
+  --accent: #0b6b5d;
+  --accent-soft: #e6f4f1;
+  --radius: 12px;
+  --focus: #1456c8;
+}
+
+.d2-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.d2-top__inner,
+.d2-body,
+.d2-nav__inner {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+/* ---------- 上部: テスト名とタイマー ---------- */
+
+.d2-top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid #dde1e7;
+  background: #fff;
+}
+
+.d2-top__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 68px;
+  padding-block: 8px;
+}
+
+.d2-top__text {
+  min-width: 0;
+}
+
+.d2-title {
+  font-size: 1.0625rem;
+  line-height: 1.4;
+}
+
+.d2 .back-link {
+  padding: 0;
+}
+
+.d2 .timer {
+  --timer-bg: #f1f3f6;
+  --timer-border: #f1f3f6;
+  flex: none;
+  padding: 8px 16px;
+  border-radius: 12px;
+}
+
+.d2 .timer--notice {
+  --timer-bg: #fff8e1;
+  --timer-border: #e9c46a;
+}
+
+.d2 .timer--warning {
+  --timer-bg: #fff0e3;
+  --timer-border: #f0a060;
+}
+
+.d2 .timer--critical {
+  --timer-bg: #ffe9e6;
+  --timer-border: #e5625a;
+}
+
+.d2 .timer--overtime {
+  --timer-bg: #a1160b;
+  --timer-border: #a1160b;
+}
+
+.d2 .timer__value {
+  font-size: 1.5rem;
+}
+
+/* ---------- 進捗: 現在位置・回答数・問題番号 ---------- */
+
+.d2-body {
+  flex: 1;
+  padding-block: 20px 24px;
+}
+
+.d2-progress {
+  margin-bottom: 16px;
+}
+
+.d2-progress__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 16px;
+  margin-bottom: 10px;
+}
+
+.d2-position {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.d2-position strong {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.d2-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.d2-stats strong {
+  color: var(--text);
+  font-size: 1.0625rem;
+}
+
+.d2-stats span {
+  color: var(--border);
+}
+
+/* 問題番号を等幅のマスで1列に並べる (多い場合は折り返す) */
+.d2 .qnav__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
+  gap: 6px;
+}
+
+.d2 .qnav__item {
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  height: 48px;
+  border-width: 1.5px;
+  border-radius: 10px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.d2 .qnav__type,
+.d2 .qnav__label {
+  display: none;
+}
+
+.d2 .qnav__status {
+  height: 14px;
+}
+
+.d2 .qnav__item:hover {
+  border-color: var(--accent);
+}
+
+.d2 .qnav__item.is-answered {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.d2 .qnav__item.is-current {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---------- 問題カード ---------- */
+
+.d2-card {
+  padding: 32px 36px 36px;
+  border: 1px solid #dde1e7;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.05);
+}
+
+.d2-type {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 2px 12px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.d2 .question__heading {
+  margin-bottom: 28px;
+  font-size: 1.3125rem;
+}
+
+.d2 .question__number {
+  font-size: 1.0625rem;
+}
+
+.d2 .choice-list {
+  gap: 12px;
+}
+
+.d2 .choice {
+  min-height: 68px;
+  padding: 14px 18px;
+  border-width: 2px;
+  font-size: 1.0625rem;
+}
+
+.d2 .choice:hover {
+  background: #f8faf9;
+}
+
+.d2 .choice.is-selected {
+  background: var(--accent-soft);
+  box-shadow: none;
+}
+
+.d2 .choice__letter {
+  width: 38px;
+  height: 38px;
+  border-width: 2px;
+  font-size: 1rem;
+}
+
+.d2 .choice__check {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+
+.d2 .choice.is-selected .choice__check {
+  background: var(--accent);
+  color: #fff;
+}
+
+.d2 .text-answer__input {
+  min-height: 220px;
+  border-width: 2px;
+  font-size: 1.0625rem;
+}
+
+/* ---------- 下部: 前後の移動 ---------- */
+
+.d2-nav {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding-block: 12px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid #dde1e7;
+  background: #fff;
+  text-align: center;
+}
+
+.d2-nav__inner {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 12px;
+}
+
+.d2 .btn {
+  min-height: 54px;
+  border-width: 2px;
+  font-size: 1.0625rem;
+}
+
+.d2-nav__submit {
+  margin-top: 2px;
+  font-size: 0.9375rem;
+}
+
+/* ---------- 受験者情報・確認・完了 ---------- */
+
+.d2 .facts > div,
+.d2 .timeinfo > div,
+.d2 .summary__count {
+  background: #f7f8fa;
+}
+
+.d2 .timeinfo .timeinfo__over {
+  background: var(--danger-soft);
+}
+
+.d2 .field input {
+  border-width: 2px;
+}
+
+@media (max-width: 560px) {
+  .d2-top__inner,
+  .d2-body,
+  .d2-nav__inner {
+    padding-inline: 14px;
+  }
+
+  .d2-body {
+    padding-block: 14px 20px;
+  }
+
+  .d2-card {
+    padding: 22px 18px 24px;
+    border-radius: 16px;
+  }
+
+  .d2 .question__heading {
+    margin-bottom: 20px;
+    font-size: 1.1875rem;
+  }
+
+  .d2 .timer {
+    padding: 6px 12px;
+  }
+
+  .d2 .timer__value {
+    font-size: 1.375rem;
+  }
+
+  .d2 .timer__note {
+    font-size: 0.6875rem;
+  }
+
+  .d2 .qnav__list {
+    grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+    gap: 4px;
+  }
+}

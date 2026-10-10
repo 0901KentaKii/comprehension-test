@@ -1,0 +1,197 @@
+/* DESIGN 01: シンプル・業務向け
+   白基調・細い罫線・1カラム。装飾を抑え、問題文を中心に表示する。 */
+
+.d1 {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --text: #1a1f27;
+  --muted: #566070;
+  --border: #cfd5dd;
+  --accent: #1f4e8c;
+  --accent-soft: #edf3fb;
+  --radius: 4px;
+}
+
+.d1-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* 上部に時間と進捗を固定表示 */
+.d1-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+
+.d1-header--static {
+  position: static;
+}
+
+.d1-header__inner,
+.d1-main,
+.d1-footer {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.d1-header__inner {
+  padding-block: 14px 16px;
+}
+
+.d1-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 16px;
+  flex-wrap: wrap;
+}
+
+.d1-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.d1-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  margin-block: 6px 10px;
+}
+
+.d1-position {
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.d1-position strong {
+  font-size: 1.5rem;
+}
+
+.d1 .timer {
+  padding: 4px 12px;
+}
+
+.d1 .timer--normal {
+  padding-right: 0;
+}
+
+.d1 .timer__note {
+  font-size: 0.75rem;
+}
+
+.d1 .progress {
+  height: 4px;
+  border-radius: 0;
+}
+
+.d1-main {
+  flex: 1;
+  padding-block: 36px 24px;
+}
+
+/* 選択肢: カードではなく、罫線で区切った一覧として表示 */
+.d1 .choice-list {
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.d1 .choice {
+  border: 0;
+  border-radius: 0;
+  border-left: 4px solid transparent;
+  padding-left: 14px;
+}
+
+.d1 .choice + .choice {
+  border-top: 1px solid var(--border);
+}
+
+.d1 .choice:hover {
+  background: #f6f8fb;
+}
+
+.d1 .choice.is-selected {
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: none;
+}
+
+.d1 .choice:has(.choice__input:focus-visible) {
+  outline-offset: -3px;
+}
+
+.d1 .choice__letter {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius);
+}
+
+.d1-footer {
+  padding-block: 16px 28px;
+  border-top: 1px solid var(--border);
+}
+
+.d1-footer__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.d1-footer__nav .btn {
+  min-width: 140px;
+}
+
+.d1-footer__sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 16px;
+  margin-top: 12px;
+}
+
+.d1-stats {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.d1 .panel {
+  padding-top: 4px;
+}
+
+.d1 .notes {
+  background: #f4f6f9;
+}
+
+@media (max-width: 560px) {
+  .d1-header__inner,
+  .d1-main,
+  .d1-footer {
+    padding-inline: 16px;
+  }
+
+  .d1-main {
+    padding-block: 24px 20px;
+  }
+
+  .d1-footer__nav .btn {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .d1 .timer__value {
+    font-size: 1.25rem;
+  }
+}

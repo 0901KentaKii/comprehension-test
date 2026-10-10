@@ -1,0 +1,319 @@
+/* デザイン選択・確認用ホーム画面 */
+
+.home {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 56px 24px 48px;
+  background: #f5f6f8;
+  color: #1a1f27;
+}
+
+.home__header,
+.home__notice,
+.home__grid,
+.home__footer {
+  max-width: 1040px;
+  margin-inline: auto;
+}
+
+.home__eyebrow {
+  color: #4a5565;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.home__title {
+  font-size: 2.25rem;
+  line-height: 1.3;
+}
+
+.home__lead {
+  margin-top: 8px;
+  color: #4a5565;
+  font-size: 1.0625rem;
+}
+
+.home__notice {
+  margin-top: 24px;
+  padding: 12px 16px;
+  border-left: 4px solid #1f4e8c;
+  border-radius: 4px;
+  background: #e9f0fa;
+  font-size: 0.9375rem;
+}
+
+.home__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 36px;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dde1e7;
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.home-card:hover {
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+  transform: translateY(-2px);
+}
+
+.home-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 20px 22px 22px;
+}
+
+.home-card__label {
+  color: #4a5565;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.home-card__name {
+  font-size: 1.375rem;
+  line-height: 1.4;
+}
+
+.home-card__desc {
+  flex: 1;
+  margin-top: 8px;
+  color: #4a5565;
+  font-size: 0.9375rem;
+}
+
+.home-card__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: 18px;
+  border-radius: 8px;
+  background: #1a1f27;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.home-card__link:hover {
+  background: #343c49;
+}
+
+.home-card__link:focus-visible {
+  outline: 3px solid #1a73e8;
+  outline-offset: 2px;
+}
+
+.home__footer {
+  display: grid;
+  gap: 6px;
+  margin-top: 36px;
+  color: #4a5565;
+  font-size: 0.875rem;
+}
+
+/* ---------- レイアウトの模式図 ---------- */
+
+.thumb {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  height: 172px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #dde1e7;
+}
+
+.thumb i {
+  display: block;
+  flex: none;
+}
+
+.thumb__row,
+.thumb__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.thumb__line {
+  height: 8px;
+  border-radius: 4px;
+  background: #b9c1cd;
+}
+
+.thumb__line--title {
+  width: 38%;
+}
+
+.thumb__line--q {
+  width: 70%;
+  margin-block: 4px 2px;
+}
+
+.thumb__pill {
+  width: 26%;
+  height: 12px;
+  border-radius: 6px;
+  background: #8fa4c2;
+}
+
+.thumb__bar {
+  height: 4px;
+  background: linear-gradient(90deg, #1f4e8c 35%, #dfe4ea 35%);
+}
+
+.thumb__opt {
+  height: 14px;
+  border: 1.5px solid #cfd5dd;
+  border-radius: 3px;
+  background: #fff;
+}
+
+/* 01: 白・罫線 */
+.thumb--1 {
+  background: #fff;
+}
+
+.thumb--1 .thumb__opt--on {
+  border-color: #1f4e8c;
+  background: #e3ecf8;
+}
+
+/* 02: グレー背景・白いカード */
+.thumb--2 {
+  align-items: stretch;
+  background: #f1f3f6;
+}
+
+.thumb--2 .thumb__pill--center {
+  align-self: center;
+  width: 36%;
+  height: 14px;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.thumb__card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #dde1e7;
+}
+
+.thumb--2 .thumb__opt {
+  height: 16px;
+  border-color: #c5ccd6;
+  border-radius: 6px;
+}
+
+.thumb--2 .thumb__opt--on {
+  border-color: #0b6b5d;
+  background: #e6f4f1;
+}
+
+.thumb__btn {
+  flex: 1 !important;
+  height: 14px;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.thumb__btn--on {
+  flex: 1.6 !important;
+  background: #0b6b5d;
+}
+
+/* 03: 上部に問題一覧の帯 */
+.thumb--3 {
+  gap: 0;
+  padding: 0;
+  background: #f1f4f9;
+}
+
+.thumb__top {
+  padding: 10px 14px;
+  border-bottom: 1px solid #d8deea;
+  background: #fff;
+}
+
+.thumb--3 .thumb__pill {
+  background: #1d4ed8;
+}
+
+.thumb__strip {
+  display: flex;
+  gap: 5px;
+  padding: 8px 14px;
+  border-bottom: 1px solid #d8deea;
+  background: #fff;
+}
+
+.thumb__dot {
+  flex: 1 !important;
+  height: 14px;
+  border-radius: 3px;
+  background: #dfe4ea;
+}
+
+.thumb__dot--done {
+  background: #7cc3a2;
+}
+
+.thumb__dot--on {
+  background: #1d4ed8;
+}
+
+.thumb__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.thumb--3 .thumb__opt {
+  border-color: #d8deea;
+  border-radius: 5px;
+}
+
+.thumb--3 .thumb__opt--on {
+  border-color: #1d4ed8;
+  background: #e8effd;
+}
+
+@media (max-width: 860px) {
+  .home {
+    padding: 36px 16px 32px;
+  }
+
+  .home__title {
+    font-size: 1.875rem;
+  }
+
+  .home__grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .thumb {
+    height: 150px;
+  }
+}
