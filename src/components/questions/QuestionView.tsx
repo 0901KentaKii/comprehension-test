@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { testConfig } from "../../config/testConfig";
 import type { Question } from "../../types/test";
 import { ChoiceQuestion } from "./ChoiceQuestion";
+import { QuestionContent } from "./QuestionContent";
 import { TextQuestion } from "./TextQuestion";
 
 interface Props {
@@ -35,10 +36,10 @@ export function QuestionView({ question, number, value, onAnswer }: Props) {
 
   return (
     <section className="question" aria-labelledby={headingId}>
-      <h2 id={headingId} ref={headingRef} tabIndex={-1} className="question__heading">
-        <span className="question__number">Q{number}.</span>
-        <span className="question__text">{question.question}</span>
+      <h2 id={headingId} ref={headingRef} tabIndex={-1} className="question__number">
+        問{number}
       </h2>
+      <QuestionContent body={question.question} />
       {question.type === "choice" ? (
         <ChoiceQuestion
           key={question.id}

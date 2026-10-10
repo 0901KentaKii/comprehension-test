@@ -5,3 +5,6 @@ dist
 .env.*.local
 *.log
 .DS_Store
+
+# 正解・配点など、公開してはいけないローカル専用ファイル
+*.local.*

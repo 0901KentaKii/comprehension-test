@@ -19,8 +19,6 @@ interface Props {
  * 完了の記録も保存していないため、ページを開き直すと氏名入力の画面になる。
  */
 export function CompletePage({ design, result, back, onRestart }: Props) {
-  const score = testConfig.showScoreToExaminee ? result.score : undefined;
-
   return (
     <design.Frame title={testConfig.title} back={back}>
       <div className="panel panel--center">
@@ -51,13 +49,6 @@ export function CompletePage({ design, result, back, onRestart }: Props) {
               </div>
             )}
           </dl>
-        )}
-
-        {score && (
-          <p className="complete-score">
-            選択式の正解数: <strong>{score.correctCount}</strong> / {score.choiceCount}(正答率{" "}
-            {Math.round(score.correctRate * 100)}%)
-          </p>
         )}
 
         {result.demo && (

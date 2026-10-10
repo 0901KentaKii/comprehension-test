@@ -2,6 +2,7 @@
  * オンラインテスト 回答受付 (Google Apps Script)
  *
  * ブラウザから送信された回答を受け取り、選択式を採点して Spreadsheet に1受験1行で保存します。
+ * 正解と配点はこのファイルには書かず、Spreadsheet の「正解」シートから読み込みます。
  * 設定は下の「設定」だけを変更すれば足ります。
  * コードを変更したら、必ず「デプロイを管理」から新しいバージョンとして再デプロイしてください。
  */
@@ -19,30 +20,36 @@ const SPREADSHEET_ID = '';
 /** 回答を保存するシート名 (無ければ自動作成) */
 const SHEET_NAME = '回答';
 
+/**
+ * 選択式の正解と配点を置くシート名。
+ * 1行目は見出し、2行目以降に A列: 問題番号 / B列: 正解 (ア・イ・ウ・エ) / C列: 配点 を入力します。
+ * このシートが無い・空の場合は採点せず、回答だけを保存します。
+ */
+const ANSWER_SHEET_NAME = '正解';
+
 /** 日時を記録するときのタイムゾーン */
 const TIME_ZONE = 'Asia/Tokyo';
 
 /**
- * 選択式問題の正解。{ 問題ID: 正解の記号 }
- * 問題ID は フロント側 src/data/questions.ts の id と一致させます。
- * 正解はこのファイルにだけ置き、フロント側には書かないでください。
+ * 問題ID。フロント側 src/data/questions.ts の id と一致させます。
+ *
+ * 【重要】このファイルは公開リポジトリに含まれます。
+ * 正解・配点・解説・採点基準・模範解答は、ここには絶対に書かないでください。
+ * 選択式の正解と配点は Spreadsheet の「正解」シートに置きます (Spreadsheet は受験者に共有しない)。
+ * 記述式は自動採点しません。確認者が、別途保管している模範解答・採点基準と照らして採点します。
  */
-const ANSWER_KEY = {
-  1: 'B',
-  2: 'C',
-  3: 'A',
-  4: 'D',
-  5: 'B',
-};
 
-/** 記述式問題の問題ID (採点せず、回答全文を保存) */
-const TEXT_QUESTION_IDS = [6, 7, 8, 9, 10];
+/** 選択式問題の問題ID (問1〜問45)。回答 (ア・イ・ウ・エ) をそのまま保存 */
+const CHOICE_QUESTION_IDS = range_(1, 45);
 
-/**
- * 採点結果 (正解数) を受験者のブラウザへ返すか。
- * true にする場合は フロント側 testConfig.showScoreToExaminee も true にします。
- */
-const RETURN_SCORE = false;
+/** 記述式問題の問題ID (問46〜問49)。回答全文を保存 */
+const TEXT_QUESTION_IDS = range_(46, 49);
+
+function range_(from, to) {
+  const ids = [];
+  for (let i = from; i <= to; i++) ids.push(i);
+  return ids;
+}
 
 // ============================== 入口 ==============================
 
@@ -62,12 +69,10 @@ function doPost(e) {
         // 登録済み: 追加せずに成功として返す (再送信・二重POST対策)
         return json_({ ok: true, duplicate: true });
       }
-      const score = grade_(data.answers);
+      const score = grade_(data.answers, loadAnswerKey_(sheet.getParent()));
       appendAttempt_(sheet, data, score, serverReceivedAt);
       SpreadsheetApp.flush();
-      const response = { ok: true, duplicate: false };
-      if (RETURN_SCORE) response.score = score;
-      return json_(response);
+      return json_({ ok: true, duplicate: false });
     } finally {
       lock.releaseLock();
     }
@@ -88,7 +93,19 @@ function doGet() {
 function setup() {
   const sheet = getSheet_();
   ensureHeaders_(sheet, buildHeaders_());
-  console.log('準備ができました: ' + sheet.getParent().getUrl());
+
+  // 「正解」シートが無ければ、見出しだけの空のシートを作る (正解と配点は手で貼り付ける)
+  const ss = sheet.getParent();
+  let answerSheet = ss.getSheetByName(ANSWER_SHEET_NAME);
+  if (!answerSheet) {
+    answerSheet = ss.insertSheet(ANSWER_SHEET_NAME);
+    answerSheet.getRange(1, 1, 1, 3).setValues([['問題番号', '正解', '配点']]).setFontWeight('bold').setBackground('#eef1f5');
+    answerSheet.setFrozenRows(1);
+  }
+  const key = loadAnswerKey_(ss);
+  const count = key ? Object.keys(key).length : 0;
+  console.log('準備ができました: ' + ss.getUrl());
+  console.log('「正解」シートに登録されている問題数: ' + count + ' / ' + CHOICE_QUESTION_IDS.length);
 }
 
 // ============================== 処理 ==============================
@@ -177,26 +194,50 @@ function attemptExists_(sheet, attemptId) {
   return found !== null;
 }
 
-function choiceIds_() {
-  return Object.keys(ANSWER_KEY)
-    .map(Number)
-    .sort(function (a, b) {
-      return a - b;
-    });
+/**
+ * 「正解」シートから { 問題ID: { answer: 正解, points: 配点 } } を読み込む。
+ * シートが無い・1件も登録されていない場合は null を返す (採点しない)。
+ */
+function loadAnswerKey_(ss) {
+  const sheet = ss.getSheetByName(ANSWER_SHEET_NAME);
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getValues();
+  const key = {};
+  let count = 0;
+  rows.forEach(function (r) {
+    const id = Number(r[0]);
+    const answer = String(r[1] == null ? '' : r[1]).trim();
+    if (!id || !answer) return;
+    const points = Number(r[2]);
+    key[id] = { answer: answer, points: isFinite(points) && points > 0 ? points : 1 };
+    count++;
+  });
+  return count ? key : null;
 }
 
-/** 選択式を採点する */
-function grade_(answers) {
-  const ids = choiceIds_();
-  let correctCount = 0;
-  ids.forEach(function (id) {
-    if (answers[id] && answers[id] === ANSWER_KEY[id]) correctCount++;
+/**
+ * 選択式を採点する。
+ * 正解が登録されていない問題は採点対象から外し、その数を missing として返す。
+ */
+function grade_(answers, key) {
+  if (!key) return null;
+  const result = { correctCount: 0, score: 0, maxScore: 0, missing: 0, correct: {} };
+  CHOICE_QUESTION_IDS.forEach(function (id) {
+    const k = key[id];
+    if (!k) {
+      result.missing++;
+      return;
+    }
+    result.maxScore += k.points;
+    if (answers[id] && answers[id] === k.answer) {
+      result.correctCount++;
+      result.score += k.points;
+      result.correct[id] = true;
+    } else {
+      result.correct[id] = false;
+    }
   });
-  return {
-    choiceCount: ids.length,
-    correctCount: correctCount,
-    correctRate: ids.length ? correctCount / ids.length : 0,
-  };
+  return result;
 }
 
 const BASE_HEADERS = [
@@ -211,9 +252,12 @@ const BASE_HEADERS = [
   '時間超過',
   '超過時間',
   '超過時間(秒)',
-  '選択式問題数',
+  '選択式回答数',
+  '記述式回答数',
   '正解数',
-  '正答率',
+  '選択式得点',
+  '選択式満点',
+  '採点メモ',
 ];
 
 const choiceHeader_ = function (id) {
@@ -224,7 +268,7 @@ const textHeader_ = function (id, i) {
 };
 
 function buildHeaders_() {
-  return BASE_HEADERS.concat(choiceIds_().map(choiceHeader_), TEXT_QUESTION_IDS.map(textHeader_));
+  return BASE_HEADERS.concat(CHOICE_QUESTION_IDS.map(choiceHeader_), TEXT_QUESTION_IDS.map(textHeader_));
 }
 
 /**
@@ -284,26 +328,41 @@ function appendAttempt_(sheet, d, score, serverReceivedAt) {
     '時間超過': overtimeSeconds > 0 ? 'あり' : 'なし',
     '超過時間': formatDuration_(overtimeSeconds),
     '超過時間(秒)': overtimeSeconds,
-    '選択式問題数': score.choiceCount,
-    '正解数': score.correctCount,
-    '正答率': score.correctRate,
   };
   // 見出し → 背景色 (選択式: 不正解は薄い赤、未回答は薄い灰色)
   const colors = {};
   colors['時間超過'] = overtimeSeconds > 0 ? '#fde9e7' : null;
 
-  choiceIds_().forEach(function (id) {
+  let choiceAnswered = 0;
+  CHOICE_QUESTION_IDS.forEach(function (id) {
     const answer = d.answers[id] || '';
     const header = choiceHeader_(id);
     row[header] = safeText_(answer);
-    colors[header] = !answer ? '#eeeeee' : answer === ANSWER_KEY[id] ? null : '#fde9e7';
+    if (answer) choiceAnswered++;
+    if (!answer) colors[header] = '#eeeeee';
+    else if (score && score.correct[id] === false) colors[header] = '#fde9e7';
   });
+  let textAnswered = 0;
   TEXT_QUESTION_IDS.forEach(function (id, i) {
-    row[textHeader_(id, i)] = safeText_(d.answers[id] || '');
+    const answer = d.answers[id] || '';
+    const header = textHeader_(id, i);
+    row[header] = safeText_(answer);
+    if (answer) textAnswered++;
+    else colors[header] = '#eeeeee';
   });
+  row['選択式回答数'] = choiceAnswered + ' / ' + CHOICE_QUESTION_IDS.length;
+  row['記述式回答数'] = textAnswered + ' / ' + TEXT_QUESTION_IDS.length;
+  if (score) {
+    row['正解数'] = score.correctCount;
+    row['選択式得点'] = score.score;
+    row['選択式満点'] = score.maxScore;
+    row['採点メモ'] = score.missing ? '正解が未登録の問題が ' + score.missing + ' 問あります (採点対象外)' : '';
+  } else {
+    row['採点メモ'] = '未採点 (「' + ANSWER_SHEET_NAME + '」シートに正解が登録されていません)';
+  }
 
   const headers = ensureHeaders_(sheet, buildHeaders_());
-  const numeric = { '所要時間(秒)': '0', '超過時間(秒)': '0', '選択式問題数': '0', '正解数': '0', '正答率': '0%' };
+  const numeric = { '所要時間(秒)': '0', '超過時間(秒)': '0', '正解数': '0', '選択式得点': '0', '選択式満点': '0' };
   const values = headers.map(function (h) {
     return row.hasOwnProperty(h) ? row[h] : '';
   });

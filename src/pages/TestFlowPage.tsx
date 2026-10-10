@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { BackToSelection } from "../components/common/BackToSelection";
-import { PreviewTools } from "../components/common/PreviewTools";
 import { testConfig } from "../config/testConfig";
 import { findDesign } from "../designs";
 import { useTestSession } from "../hooks/useTestSession";
@@ -45,10 +44,5 @@ export function TestFlowPage({ designId }: { designId?: number }) {
     screen = <UserInfoPage design={design} controller={controller} back={back} />;
   }
 
-  return (
-    <>
-      <div className={`design ${design.className}`}>{screen}</div>
-      {preview && <PreviewTools controller={controller} />}
-    </>
-  );
+  return <div className={`design ${design.className}`}>{screen}</div>;
 }

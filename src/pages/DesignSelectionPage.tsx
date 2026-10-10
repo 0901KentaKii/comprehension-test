@@ -6,22 +6,6 @@ import "../styles/home.css";
 
 /** 各デザインのレイアウトを表す小さな模式図 */
 function Thumbnail({ id }: { id: number }) {
-  if (id === 1) {
-    return (
-      <div className="thumb thumb--1" aria-hidden="true">
-        <div className="thumb__row">
-          <i className="thumb__line thumb__line--title" />
-          <i className="thumb__pill" />
-        </div>
-        <i className="thumb__bar" />
-        <i className="thumb__line thumb__line--q" />
-        <i className="thumb__opt" />
-        <i className="thumb__opt thumb__opt--on" />
-        <i className="thumb__opt" />
-        <i className="thumb__opt" />
-      </div>
-    );
-  }
   if (id === 2) {
     return (
       <div className="thumb thumb--2" aria-hidden="true">
@@ -105,9 +89,8 @@ export function DesignSelectionPage() {
 
       <footer className="home__footer">
         <p>
-          3案とも、問題・回答・タイマー・保存・提出の仕組みは共通です。違いは見た目とレイアウトだけなので、途中でデザインを切り替えても回答は引き継がれます。
+          どちらの案も、問題・回答・タイマー・保存・提出の仕組みは共通です。違いは見た目とレイアウトだけなので、途中でデザインを切り替えても回答は引き継がれます。
         </p>
-        <p>各画面の下部にある「デザイン確認ツール」で、残り時間の警告表示や超過時間の表示をすぐに確認できます。</p>
       </footer>
     </div>
   );

@@ -3,19 +3,13 @@ export const testConfig = {
   title: "生成AI 理解度テスト",
 
   /** 設定時間(分)。目安であり、超過しても強制終了・自動提出はしない */
-  durationMinutes: 30,
-
-  /**
-   * 提出完了画面に正解数を表示するか。
-   * true にする場合は gas/Code.gs の RETURN_SCORE も true にすること。
-   */
-  showScoreToExaminee: false,
+  durationMinutes: 60,
 
   /** 提出完了画面に 設定時間・所要時間・超過時間 を表示するか */
   showTimeSummaryOnComplete: true,
 
   /** 記述式問題で maxLength を指定しなかった場合の最大文字数 */
-  defaultTextMaxLength: 1000,
+  defaultTextMaxLength: 4000,
 
   /**
    * デザイン確認モード。
@@ -24,6 +18,6 @@ export const testConfig = {
    */
   designPreviewMode: true,
 
-  /** designPreviewMode が false のときに使用するデザイン (1 | 2 | 3) */
-  defaultDesign: 1 as 1 | 2 | 3,
+  /** designPreviewMode が false のときに使用するデザイン (2: カード型 | 3: モダン) */
+  defaultDesign: 2 as 2 | 3,
 };

@@ -143,10 +143,40 @@
   color: var(--border);
 }
 
-/* 問題番号を等幅のマスで1列に並べる (多い場合は折り返す) */
+.d2 .progress {
+  height: 8px;
+}
+
+/* 問題一覧: 問題数が多いため折りたたみ、必要なときだけ開く */
+.d2-list {
+  margin-top: 10px;
+}
+
+.d2-list summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 4px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.d2-list summary:hover {
+  border-color: var(--accent);
+}
+
+.d2-list[open] summary {
+  margin-bottom: 10px;
+}
+
 .d2 .qnav__list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
   gap: 6px;
 }
 
@@ -208,14 +238,7 @@
   font-weight: 700;
 }
 
-.d2 .question__heading {
-  margin-bottom: 28px;
-  font-size: 1.3125rem;
-}
 
-.d2 .question__number {
-  font-size: 1.0625rem;
-}
 
 .d2 .choice-list {
   gap: 12px;
@@ -322,10 +345,6 @@
     border-radius: 16px;
   }
 
-  .d2 .question__heading {
-    margin-bottom: 20px;
-    font-size: 1.1875rem;
-  }
 
   .d2 .timer {
     padding: 6px 12px;
@@ -337,10 +356,5 @@
 
   .d2 .timer__note {
     font-size: 0.6875rem;
-  }
-
-  .d2 .qnav__list {
-    grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
-    gap: 4px;
   }
 }

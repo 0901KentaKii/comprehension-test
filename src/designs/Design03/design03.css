@@ -131,20 +131,22 @@
   grid-column: 1 / -1;
 }
 
+/* 全問題を番号のマスで常に表示する (PC では2段程度に収まる)。回答済みはチェックマーク付き */
 .d3 .qnav__list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+  gap: 4px;
 }
 
 .d3 .qnav__item {
   flex-direction: column;
   justify-content: center;
-  gap: 2px;
+  gap: 0;
   width: 100%;
-  min-height: 62px;
-  padding: 4px 2px;
+  min-height: 44px;
+  padding: 2px;
   border-color: var(--border);
+  border-radius: 8px;
 }
 
 .d3 .qnav__item:hover {
@@ -153,20 +155,18 @@
 }
 
 .d3 .qnav__num {
-  font-size: 1.0625rem;
+  font-size: 0.9375rem;
   font-weight: 700;
 }
 
-.d3 .qnav__type {
+.d3 .qnav__type,
+.d3 .qnav__label {
   display: none;
 }
 
 .d3 .qnav__status {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
+  height: 14px;
   color: var(--muted);
-  font-size: 0.75rem;
 }
 
 .d3 .qnav__item.is-answered {
@@ -228,14 +228,7 @@
   font-weight: 700;
 }
 
-.d3 .question__heading {
-  margin-bottom: 28px;
-  font-size: 1.25rem;
-}
 
-.d3 .question__number {
-  font-size: 1.0625rem;
-}
 
 .d3 .choice {
   min-height: 60px;
@@ -299,24 +292,21 @@
     padding-inline: 14px;
   }
 
-  /* 問題番号だけのボタンにする (回答済みはチェックマークで示す) */
+  /* 狭い画面では1段の横スクロールにして、問題文の表示領域を確保する */
   .d3 .qnav__list {
-    grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
-    gap: 4px;
+    display: flex;
+    gap: 6px;
+    padding: 3px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .d3 .qnav__list > li {
+    flex: 0 0 44px;
   }
 
   .d3 .qnav__item {
-    gap: 0;
     min-height: 48px;
-    padding: 2px;
-  }
-
-  .d3 .qnav__label {
-    display: none;
-  }
-
-  .d3 .qnav__status {
-    height: 14px;
   }
 
   .d3-main {
@@ -327,10 +317,6 @@
     padding: 22px 18px 24px;
   }
 
-  .d3 .question__heading {
-    margin-bottom: 20px;
-    font-size: 1.1875rem;
-  }
 
   .d3-panel__foot .btn {
     flex: 1;

@@ -1,7 +1,9 @@
 import type { AnswerMap, AnswerStats, Question } from "../types/test";
 
-/** 選択肢の位置 (0, 1, 2 …) を記号 (A, B, C …) にする */
-export const choiceLetter = (index: number) => String.fromCharCode(65 + index);
+const CHOICE_LETTERS = "アイウエオカキクケコ";
+
+/** 選択肢の位置 (0, 1, 2 …) を記号 (ア, イ, ウ, エ …) にする。回答もこの記号で保存・送信する */
+export const choiceLetter = (index: number) => CHOICE_LETTERS[index] ?? String(index + 1);
 
 export function isAnswered(question: Question, answers: AnswerMap): boolean {
   return (answers[question.id] ?? "").trim() !== "";

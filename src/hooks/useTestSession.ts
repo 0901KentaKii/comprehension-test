@@ -123,7 +123,6 @@ export function useTestSession() {
         timeExceeded: payload.timeExceeded,
         overtimeSeconds: payload.overtimeSeconds,
         demo: response.demo === true,
-        score: response.score,
       });
       // 送信に成功した場合のみ、受験中データを削除する (= 自動ログアウト)。
       // 氏名・回答は端末に残らないので、同じ端末で次の人がそのまま受験できる。
@@ -144,18 +143,6 @@ export function useTestSession() {
     setSubmitError(null);
   }, []);
 
-  /** デザイン確認用: 残り時間を指定した秒数に変更する (負の値で超過状態) */
-  const debugSetRemaining = useCallback((remainingSeconds: number) => {
-    updateInProgress((s) => {
-      const endMs = Date.now() + remainingSeconds * 1000;
-      return {
-        ...s,
-        startedAt: new Date(endMs - testConfig.durationMinutes * 60_000).toISOString(),
-        targetEndAt: new Date(endMs).toISOString(),
-      };
-    });
-  }, []);
-
   const stats = useMemo(() => computeStats(questions, session?.answers ?? {}), [session?.answers]);
 
   return {
@@ -173,7 +160,6 @@ export function useTestSession() {
     backToTest,
     submit,
     reset,
-    debugSetRemaining,
   };
 }
 

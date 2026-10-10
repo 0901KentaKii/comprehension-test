@@ -24,11 +24,22 @@ export function QuestionNav({ questions, answers, currentIndex, onJump }: Props)
   useEffect(() => {
     const nav = navRef.current;
     const item = currentRef.current;
-    if (!nav || !item || nav.scrollHeight <= nav.clientHeight) return;
-    const navBox = nav.getBoundingClientRect();
+    if (!nav || !item) return;
     const itemBox = item.getBoundingClientRect();
-    if (itemBox.top < navBox.top) nav.scrollTop -= navBox.top - itemBox.top + 8;
-    else if (itemBox.bottom > navBox.bottom) nav.scrollTop += itemBox.bottom - navBox.bottom + 8;
+
+    // 縦にスクロールする一覧
+    if (nav.scrollHeight > nav.clientHeight) {
+      const navBox = nav.getBoundingClientRect();
+      if (itemBox.top < navBox.top) nav.scrollTop -= navBox.top - itemBox.top + 8;
+      else if (itemBox.bottom > navBox.bottom) nav.scrollTop += itemBox.bottom - navBox.bottom + 8;
+    }
+
+    // 横にスクロールする一覧 (狭い画面の1段表示): 現在の問題を中央付近に寄せる
+    const list = nav.querySelector("ol");
+    if (list && list.scrollWidth > list.clientWidth) {
+      const listBox = list.getBoundingClientRect();
+      list.scrollLeft += itemBox.left + itemBox.width / 2 - (listBox.left + listBox.width / 2);
+    }
   }, [currentIndex]);
 
   return (

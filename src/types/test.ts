@@ -1,21 +1,42 @@
+/**
+ * 問題文を構成する部品。前提情報・箇条書き・表などを含む長い問題を、原文の順序のまま表示するために使う。
+ * - p       : 場面や前提の説明 (通常の文)
+ * - ask     : 問いかけの文 (太字で表示)
+ * - quote   : 資料・依頼文・メール本文など、問題の中で引用されている文章 (枠で囲んで表示)
+ * - list    : 箇条書き。ordered を付けると 1. 2. 3. の番号付き。
+ *             plain を付けると記号なし (項目自体が「a …」「① …」などで始まる場合)
+ * - table   : 表
+ * - heading : 小見出し
+ */
+export type ContentBlock =
+  | { type: "p"; text: string }
+  | { type: "ask"; text: string }
+  | { type: "quote"; lines: string[] }
+  | { type: "list"; items: string[]; ordered?: boolean; plain?: boolean }
+  | { type: "table"; headers: string[]; rows: string[][] }
+  | { type: "heading"; text: string };
+
+/** 問題文。1文だけなら文字列、前提情報などを含む場合は部品の配列で書く */
+export type QuestionBody = string | ContentBlock[];
+
 /** 問題データ。選択式・記述式を共通の配列で管理する。 */
 export type Question =
   | {
       id: number;
       type: "choice";
-      question: string;
+      question: QuestionBody;
       choices: string[];
     }
   | {
       id: number;
       type: "text";
-      question: string;
+      question: QuestionBody;
       maxLength?: number;
     };
 
 /**
  * 回答。キーは問題ID。
- * 選択式は "A" "B" "C" "D"、記述式は入力された文章。未回答はキーなし(または空文字)。
+ * 選択式は "ア" "イ" "ウ" "エ"、記述式は入力された文章。未回答はキーなし(または空文字)。
  */
 export type AnswerMap = Record<number, string>;
 
@@ -65,13 +86,6 @@ export interface SubmitPayload {
   answers: SubmitAnswer[];
 }
 
-export interface Score {
-  choiceCount: number;
-  correctCount: number;
-  /** 0〜1 */
-  correctRate: number;
-}
-
 /** Google Apps Script からの応答 */
 export interface SubmitResponse {
   ok: boolean;
@@ -79,7 +93,6 @@ export interface SubmitResponse {
   duplicate?: boolean;
   /** Spreadsheet には保存していないデモ送信の場合 true */
   demo?: boolean;
-  score?: Score;
   error?: string;
 }
 
@@ -93,7 +106,6 @@ export interface TestResult {
   timeExceeded: boolean;
   overtimeSeconds: number;
   demo: boolean;
-  score?: Score;
 }
 
 export type TimerLevel = "normal" | "notice" | "warning" | "critical" | "overtime";

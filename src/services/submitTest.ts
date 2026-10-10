@@ -3,17 +3,9 @@ import type { SubmitPayload, SubmitResponse } from "../types/test";
 
 const endpoint = (import.meta.env.VITE_GAS_ENDPOINT ?? "").trim();
 const TIMEOUT_MS = 30_000;
-const SIMULATE_FAILURE_KEY = "online-test:simulate-failure";
 
 /** 送信先が未設定で、デモ送信 (Spreadsheet に保存しない) になる状態か */
 export const isDemoSubmit = endpoint === "" && testConfig.designPreviewMode;
-
-/** デザイン確認用: 次回の送信を失敗させる */
-export const simulateFailure = {
-  get: () => sessionStorage.getItem(SIMULATE_FAILURE_KEY) === "1",
-  set: (on: boolean) =>
-    on ? sessionStorage.setItem(SIMULATE_FAILURE_KEY, "1") : sessionStorage.removeItem(SIMULATE_FAILURE_KEY),
-};
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -28,12 +20,6 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * 同じ attemptId を再送しても Apps Script 側で二重登録されないため、再送信は安全。
  */
 export async function submitTest(payload: SubmitPayload): Promise<SubmitResponse> {
-  if (testConfig.designPreviewMode && simulateFailure.get()) {
-    await wait(800);
-    simulateFailure.set(false);
-    throw new Error("送信失敗を再現しました (デザイン確認ツール)");
-  }
-
   if (endpoint === "") {
     if (!testConfig.designPreviewMode) {
       throw new Error("送信先 (VITE_GAS_ENDPOINT) が設定されていません");
