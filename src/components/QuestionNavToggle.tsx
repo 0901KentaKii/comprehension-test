@@ -2,7 +2,7 @@ import { useId, useState, type ComponentProps } from "react";
 import { QuestionNav } from "./QuestionNav";
 
 /**
- * 開閉できる問題一覧。ボタンを押すたびに一覧を開く / 閉じる。
+ * 開閉できる問題一覧。ボタンを押すたびに一覧を開く / 閉じる。問題を選ぶと自動で閉じる。
  * 問題数が多いので普段は閉じておき、移動したいときだけ開く。
  */
 export function QuestionNavToggle(props: ComponentProps<typeof QuestionNav>) {
@@ -25,7 +25,14 @@ export function QuestionNavToggle(props: ComponentProps<typeof QuestionNav>) {
         </svg>
       </button>
       <div id={panelId} className="qtoggle__panel" hidden={!open}>
-        <QuestionNav {...props} />
+        <QuestionNav
+          {...props}
+          onJump={(index) => {
+            // 問題を選んだら一覧を閉じて、選んだ問題をすぐ読めるようにする
+            setOpen(false);
+            props.onJump(index);
+          }}
+        />
       </div>
     </div>
   );
