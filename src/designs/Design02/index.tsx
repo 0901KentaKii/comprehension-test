@@ -51,6 +51,14 @@ function TestScreen(props: TestScreenProps) {
             onAnswer={props.onAnswer}
           />
         </main>
+
+        {!isLast && (
+          <p className="d2-submit">
+            <button type="button" className="link-btn" onClick={props.onOpenConfirm}>
+              回答を確認して提出する
+            </button>
+          </p>
+        )}
       </div>
 
       <footer className="d2-nav">
@@ -70,11 +78,6 @@ function TestScreen(props: TestScreenProps) {
             </button>
           )}
         </div>
-        {!isLast && (
-          <button type="button" className="link-btn d2-nav__submit" onClick={props.onOpenConfirm}>
-            回答を確認して提出する
-          </button>
-        )}
       </footer>
     </div>
   );

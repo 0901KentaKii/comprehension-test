@@ -24,14 +24,15 @@ export function QuestionView({ question, number, value, onAnswer }: Props) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const isFirstRender = useRef(true);
 
-  // 問題を移動したら見出しへフォーカスを移す (キーボード・読み上げ利用時に現在位置が分かる)
+  // 問題を移動したら、ページを先頭に戻して問題文の最初から読めるようにする。
+  // あわせて見出しへフォーカスを移す (キーボード・読み上げ利用時に現在位置が分かる)
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     headingRef.current?.focus({ preventScroll: true });
-    headingRef.current?.scrollIntoView({ block: "nearest" });
   }, [question.id]);
 
   return (
