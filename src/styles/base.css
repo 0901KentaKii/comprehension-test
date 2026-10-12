@@ -401,74 +401,86 @@ button:disabled {
 
 /* ---------- 記述式 (表形式の回答欄) ---------- */
 
-/* 画面幅ではなく回答欄そのものの幅で、表 / 行ごとのカードを切り替える */
+/* 行ごとに1枚のカード。左に行見出し (工程 + 番号)、右に入力欄 */
 .table-answer {
+  display: grid;
+  gap: 14px;
+  /* 画面幅ではなく回答欄そのものの幅で、横並び / 縦並びを切り替える */
   container-type: inline-size;
 }
 
-.table-answer__table {
-  width: 100%;
+.table-answer__row {
+  display: flex;
+  padding: 16px 18px 18px 0;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  border-collapse: separate;
-  border-spacing: 0;
-  table-layout: fixed;
+  border-radius: 12px;
   background: var(--surface);
 }
 
-.table-answer__table th,
-.table-answer__table td {
-  padding: 6px;
-  border-bottom: 1px solid var(--border);
-  text-align: left;
-  vertical-align: top;
+.table-answer__rowhead {
+  display: flex;
+  flex: 0 0 84px;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 4px;
+  border-right: 1px solid var(--border);
 }
 
-.table-answer__table tbody tr:last-child > * {
-  border-bottom: 0;
-}
-
-.table-answer__table thead th {
-  padding: 10px 8px;
-  background: #f1f3f6;
-  font-size: 0.9375rem;
+.table-answer__rowname {
+  font-size: 0.875rem;
   font-weight: 700;
 }
 
-.table-answer__table thead th:first-child {
-  border-top-left-radius: var(--radius);
-}
-
-.table-answer__table thead th:last-child {
-  border-top-right-radius: var(--radius);
-}
-
-.table-answer__table .table-answer__rowhead {
-  width: 3.4em;
-  text-align: center;
-}
-
-.table-answer__table thead th.is-wide {
-  width: 32%;
-}
-
-.table-answer__table tbody .table-answer__rowhead {
-  padding-top: 14px;
+.table-answer__rownum {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 12%, #fff);
+  color: var(--accent);
+  font-size: 1.5rem;
   font-weight: 700;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
-/* 表のときは列見出しがあるので、行の補足とセルごとの見出しは出さない */
-.table-answer__rowprefix,
-.table-answer__rownote,
-.table-answer__celllabel {
+/* 横並びのときは行の補足 (工程の内容) を出さない。上の問題文の表で確認できる */
+.table-answer__rownote {
   display: none;
+}
+
+.table-answer__fields {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 14px;
+  min-width: 0;
+  padding-left: 18px;
+}
+
+.table-answer__field {
+  display: block;
+  min-width: 0;
+}
+
+.table-answer__field--wide {
+  grid-column: 1 / -1;
+}
+
+.table-answer__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .table-answer__input {
   display: block;
   width: 100%;
-  min-height: 108px;
+  min-height: 76px;
   padding: 8px 10px;
   border: 1.5px solid var(--border);
   border-radius: 8px;
@@ -478,76 +490,58 @@ button:disabled {
   resize: vertical;
 }
 
+.table-answer__input::placeholder {
+  color: #7b838e;
+}
+
 .table-answer__input:focus {
   border-color: var(--accent);
 }
 
 @container (max-width: 599px) {
-  .table-answer__table,
-  .table-answer__table tbody,
-  .table-answer__table tr,
-  .table-answer__table th,
-  .table-answer__table td {
+  .table-answer__row {
     display: block;
-    width: auto;
+    padding: 14px 14px 16px;
   }
 
-  .table-answer__table {
-    border: 0;
-    background: transparent;
+  .table-answer__rowhead {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 2px 10px;
+    margin-bottom: 12px;
+    padding: 0 0 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
   }
 
-  .table-answer__table thead {
-    display: none;
+  .table-answer__rownum {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
   }
 
-  .table-answer__table tbody tr {
-    margin-bottom: 14px;
-    padding: 12px 12px 14px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
-  }
-
-  .table-answer__table tbody tr:last-child {
-    margin-bottom: 0;
-  }
-
-  .table-answer__table th,
-  .table-answer__table td {
-    padding: 0;
-    border-bottom: 0;
-  }
-
-  .table-answer__table tbody .table-answer__rowhead {
-    width: auto;
-    padding-top: 0;
-    text-align: left;
-  }
-
-  .table-answer__rowprefix {
-    display: inline;
+  .table-answer__rowname {
+    grid-column: 2;
   }
 
   .table-answer__rownote {
     display: block;
-    margin-top: 2px;
+    grid-column: 2;
     color: var(--muted);
     font-size: 0.9375rem;
-    font-weight: 400;
     line-height: 1.6;
   }
 
-  .table-answer__celllabel {
-    display: block;
-    margin: 12px 0 4px;
-    font-size: 0.9375rem;
-    font-weight: 700;
+  .table-answer__fields {
+    grid-template-columns: 1fr;
+    padding-left: 0;
   }
 
   /* 16px 未満だと iOS で入力時に画面が拡大される */
   .table-answer__input {
-    min-height: 76px;
     font-size: 1rem;
   }
 }
