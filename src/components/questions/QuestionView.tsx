@@ -3,6 +3,7 @@ import { testConfig } from "../../config/testConfig";
 import type { Question } from "../../types/test";
 import { ChoiceQuestion } from "./ChoiceQuestion";
 import { QuestionContent } from "./QuestionContent";
+import { TableQuestion } from "./TableQuestion";
 import { TextQuestion } from "./TextQuestion";
 
 interface Props {
@@ -46,6 +47,14 @@ export function QuestionView({ question, number, value, onAnswer }: Props) {
           key={question.id}
           questionId={question.id}
           choices={question.choices}
+          value={value}
+          onChange={(v) => onAnswer(question.id, v)}
+          labelledBy={headingId}
+        />
+      ) : question.answerTable ? (
+        <TableQuestion
+          key={question.id}
+          table={question.answerTable}
           value={value}
           onChange={(v) => onAnswer(question.id, v)}
           labelledBy={headingId}

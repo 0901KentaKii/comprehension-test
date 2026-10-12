@@ -19,6 +19,19 @@ export type ContentBlock =
 /** 問題文。1文だけなら文字列、前提情報などを含む場合は部品の配列で書く */
 export type QuestionBody = string | ContentBlock[];
 
+/**
+ * 記述式の回答欄を表にする場合の定義。行ごとに、各列の入力欄が1つずつ並ぶ。
+ * 送信時は1つの文章にまとめるので、Spreadsheet 側は通常の記述式と同じ1列のまま。
+ */
+export interface AnswerTable {
+  /** 行見出しの列名 (例: "工程") */
+  rowHeader: string;
+  /** label は行の名前 (例: "1")。note は狭い画面で行見出しに添える補足 (例: 工程の内容) */
+  rows: { label: string; note?: string }[];
+  /** 入力欄の列。wide を付けると幅を広く取る */
+  columns: { label: string; maxLength: number; wide?: boolean }[];
+}
+
 /** 問題データ。選択式・記述式を共通の配列で管理する。 */
 export type Question =
   | {
@@ -32,11 +45,14 @@ export type Question =
       type: "text";
       question: QuestionBody;
       maxLength?: number;
+      /** 指定すると、回答欄が自由記述ではなく表になる */
+      answerTable?: AnswerTable;
     };
 
 /**
  * 回答。キーは問題ID。
- * 選択式は "ア" "イ" "ウ" "エ"、記述式は入力された文章。未回答はキーなし(または空文字)。
+ * 選択式は "ア" "イ" "ウ" "エ"、記述式は入力された文章 (表形式の回答欄はセルの配列の JSON)。
+ * 未回答はキーなし(または空文字)。
  */
 export type AnswerMap = Record<number, string>;
 

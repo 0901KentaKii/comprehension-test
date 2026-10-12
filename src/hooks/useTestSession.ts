@@ -4,6 +4,7 @@ import { questions } from "../data/questions";
 import { submitTest } from "../services/submitTest";
 import type { SubmitPayload, TestSession } from "../types/test";
 import { computeStats } from "../utils/answers";
+import { formatTableAnswer } from "../utils/tableAnswer";
 import { computeSubmitTiming } from "../utils/time";
 import { resultStore, sessionStore, useTestStorage } from "./useTestStorage";
 
@@ -31,7 +32,10 @@ function buildPayload(session: TestSession, submittedAt: string): SubmitPayload 
     answers: questions.map((q) => ({
       questionId: q.id,
       type: q.type,
-      answer: (session.answers[q.id] ?? "").trim(),
+      answer:
+        q.type === "text" && q.answerTable
+          ? formatTableAnswer(session.answers[q.id] ?? "", q.answerTable)
+          : (session.answers[q.id] ?? "").trim(),
     })),
   };
 }

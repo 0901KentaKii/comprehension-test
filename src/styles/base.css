@@ -399,6 +399,159 @@ button:disabled {
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- 記述式 (表形式の回答欄) ---------- */
+
+/* 画面幅ではなく回答欄そのものの幅で、表 / 行ごとのカードを切り替える */
+.table-answer {
+  container-type: inline-size;
+}
+
+.table-answer__table {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  background: var(--surface);
+}
+
+.table-answer__table th,
+.table-answer__table td {
+  padding: 6px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.table-answer__table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.table-answer__table thead th {
+  padding: 10px 8px;
+  background: #f1f3f6;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.table-answer__table thead th:first-child {
+  border-top-left-radius: var(--radius);
+}
+
+.table-answer__table thead th:last-child {
+  border-top-right-radius: var(--radius);
+}
+
+.table-answer__table .table-answer__rowhead {
+  width: 3.4em;
+  text-align: center;
+}
+
+.table-answer__table thead th.is-wide {
+  width: 32%;
+}
+
+.table-answer__table tbody .table-answer__rowhead {
+  padding-top: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 表のときは列見出しがあるので、行の補足とセルごとの見出しは出さない */
+.table-answer__rowprefix,
+.table-answer__rownote,
+.table-answer__celllabel {
+  display: none;
+}
+
+.table-answer__input {
+  display: block;
+  width: 100%;
+  min-height: 108px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.table-answer__input:focus {
+  border-color: var(--accent);
+}
+
+@container (max-width: 599px) {
+  .table-answer__table,
+  .table-answer__table tbody,
+  .table-answer__table tr,
+  .table-answer__table th,
+  .table-answer__table td {
+    display: block;
+    width: auto;
+  }
+
+  .table-answer__table {
+    border: 0;
+    background: transparent;
+  }
+
+  .table-answer__table thead {
+    display: none;
+  }
+
+  .table-answer__table tbody tr {
+    margin-bottom: 14px;
+    padding: 12px 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .table-answer__table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .table-answer__table th,
+  .table-answer__table td {
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .table-answer__table tbody .table-answer__rowhead {
+    width: auto;
+    padding-top: 0;
+    text-align: left;
+  }
+
+  .table-answer__rowprefix {
+    display: inline;
+  }
+
+  .table-answer__rownote {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .table-answer__celllabel {
+    display: block;
+    margin: 12px 0 4px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+
+  /* 16px 未満だと iOS で入力時に画面が拡大される */
+  .table-answer__input {
+    min-height: 76px;
+    font-size: 1rem;
+  }
+}
+
 /* ---------- タイマー ---------- */
 
 .timer {
