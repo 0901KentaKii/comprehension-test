@@ -14,14 +14,14 @@ interface Props {
 /**
  * 記述式の回答欄 (表形式)。行ごとに1枚のカードにして、列の入力欄を並べる。
  * 広い画面では入力欄を横に並べ (wide の列は下段に全幅)、狭い画面では縦に並べる (切り替えは CSS)。
- * カードは行見出しのボタンでたためる。たたんだカードには行の補足と入力状況を出す。
+ * カードは右上のボタンでたためる。カード上部には行の補足と入力状況を出す。
  */
 export function TableQuestion({ table, value, onChange, labelledBy }: Props) {
   const baseId = useId();
   const hintId = `${baseId}-hint`;
   const cells = parseTableAnswer(value, table);
-  // 最初はすべて開いておく
-  const [collapsed, setCollapsed] = useState<boolean[]>(() => table.rows.map(() => false));
+  // 最初は先頭の行だけ開いておく
+  const [collapsed, setCollapsed] = useState<boolean[]>(() => table.rows.map((_, r) => r !== 0));
 
   const update = (r: number, c: number, text: string) => {
     const next = cells.map((row) => [...row]);
@@ -68,46 +68,52 @@ export function TableQuestion({ table, value, onChange, labelledBy }: Props) {
             role="group"
             aria-label={`${table.rowHeader}${row.label}`}
           >
-            <button
-              type="button"
-              className="table-answer__rowhead"
-              aria-expanded={!isCollapsed}
-              aria-controls={fieldsId}
-              onClick={() => toggle(r)}
-            >
-              <span className="table-answer__badge">
-                <span className="table-answer__rowname">{table.rowHeader}</span>
-                <span className="table-answer__rownum">{row.label}</span>
-              </span>
-              <span className="table-answer__summary">
-                {row.note && <span className="table-answer__rownote">{row.note}</span>}
-                <span className={`table-answer__status table-answer__status--${statusMod}`}>
-                  {status}
-                </span>
-              </span>
-              <span className="table-answer__chevron">
-                <ChevronDownIcon size={18} />
-                <span className="table-answer__chevron-text">{isCollapsed ? "開く" : "閉じる"}</span>
-              </span>
-            </button>
-            <div id={fieldsId} className="table-answer__fields" hidden={isCollapsed}>
-              {table.columns.map((col, c) => (
-                <label
-                  key={col.label}
-                  className={`table-answer__field${col.wide ? " table-answer__field--wide" : ""}`}
+            <div className="table-answer__rowhead">
+              <span className="table-answer__rowname">{table.rowHeader}</span>
+              <span className="table-answer__rownum">{row.label}</span>
+            </div>
+            <div className="table-answer__body">
+              <div className="table-answer__bar">
+                <div className="table-answer__summary">
+                  {row.note && <span className="table-answer__rownote">{row.note}</span>}
+                  <span className={`table-answer__status table-answer__status--${statusMod}`}>
+                    {status}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="table-answer__toggle"
+                  aria-expanded={!isCollapsed}
+                  aria-controls={fieldsId}
+                  onClick={() => toggle(r)}
                 >
-                  <span className="table-answer__label">{col.label}</span>
-                  <textarea
-                    className="table-answer__input"
-                    aria-label={`${table.rowHeader}${row.label} ${col.label}`}
-                    placeholder="入力してください"
-                    rows={3}
-                    maxLength={col.maxLength}
-                    value={cells[r][c]}
-                    onChange={(e) => update(r, c, e.target.value)}
-                  />
-                </label>
-              ))}
+                  <span className="visually-hidden">
+                    {table.rowHeader}
+                    {row.label}を
+                  </span>
+                  {isCollapsed ? "開く" : "閉じる"}
+                  <ChevronDownIcon size={18} />
+                </button>
+              </div>
+              <div id={fieldsId} className="table-answer__fields" hidden={isCollapsed}>
+                {table.columns.map((col, c) => (
+                  <label
+                    key={col.label}
+                    className={`table-answer__field${col.wide ? " table-answer__field--wide" : ""}`}
+                  >
+                    <span className="table-answer__label">{col.label}</span>
+                    <textarea
+                      className="table-answer__input"
+                      aria-label={`${table.rowHeader}${row.label} ${col.label}`}
+                      placeholder="入力してください"
+                      rows={3}
+                      maxLength={col.maxLength}
+                      value={cells[r][c]}
+                      onChange={(e) => update(r, c, e.target.value)}
+                    />
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
         );

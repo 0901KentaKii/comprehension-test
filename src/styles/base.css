@@ -401,7 +401,7 @@ button:disabled {
 
 /* ---------- 記述式 (表形式の回答欄) ---------- */
 
-/* 行ごとに1枚のカード。左に行見出し (工程 + 番号)、右に入力欄。行見出しのボタンでたためる */
+/* 行ごとに1枚のカード。左に行見出し (工程 + 番号)、右に入力欄。右上のボタンでたためる */
 .table-answer {
   display: grid;
   gap: 14px;
@@ -442,24 +442,18 @@ button:disabled {
   background: var(--surface);
 }
 
+.table-answer__row.is-collapsed {
+  padding-bottom: 16px;
+}
+
 .table-answer__rowhead {
   display: flex;
   flex: 0 0 84px;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 4px 0 0;
-  border: 0;
-  border-right: 1px solid var(--border);
-  background: none;
-  text-align: left;
-}
-
-.table-answer__badge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 6px;
+  padding-top: 4px;
+  border-right: 1px solid var(--border);
 }
 
 .table-answer__rowname {
@@ -481,24 +475,48 @@ button:disabled {
   font-variant-numeric: tabular-nums;
 }
 
-/* 開いているときは補足 (工程の内容) と入力状況を出さない。上の問題文の表で確認できる */
+.table-answer__body {
+  flex: 1;
+  min-width: 0;
+  padding-left: 18px;
+}
+
+/* カード上部: 左に工程の内容と入力状況、右上に開閉ボタン */
+.table-answer__bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.table-answer__row:not(.is-collapsed) .table-answer__bar {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--border);
+}
+
 .table-answer__summary {
-  display: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  min-width: 0;
+  padding-top: 4px;
 }
 
 .table-answer__rownote {
-  color: var(--text);
   font-size: 0.9375rem;
+  font-weight: 700;
   line-height: 1.6;
 }
 
 .table-answer__status {
-  align-self: flex-start;
   padding: 2px 10px;
   border-radius: 999px;
   font-size: 0.8125rem;
   font-weight: 700;
   line-height: 1.6;
+  white-space: nowrap;
 }
 
 .table-answer__status--empty {
@@ -516,60 +534,48 @@ button:disabled {
   color: var(--accent);
 }
 
-.table-answer__chevron {
-  display: flex;
-  flex-direction: column;
+.table-answer__toggle {
+  display: inline-flex;
+  flex: none;
   align-items: center;
-  gap: 2px;
-  color: var(--muted);
-  font-size: 0.75rem;
+  gap: 4px;
+  min-height: 36px;
+  padding: 6px 10px 6px 14px;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-.table-answer__chevron .icon {
+.table-answer__toggle:hover {
+  background: var(--accent-soft);
+}
+
+/* 閉じているときは目立つ塗りつぶしにして「開く」操作を促す */
+.table-answer__toggle[aria-expanded="false"] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.table-answer__toggle[aria-expanded="false"]:hover {
+  background: color-mix(in srgb, var(--accent) 85%, #000);
+}
+
+.table-answer__toggle .icon {
   transition: transform 0.15s;
 }
 
-.table-answer__rowhead[aria-expanded="false"] .table-answer__chevron .icon {
-  transform: rotate(-90deg);
-}
-
-.table-answer__rowhead:hover .table-answer__chevron {
-  color: var(--accent);
-}
-
-/* たたんだカード: 見出しのボタンが横いっぱいに広がり、補足と入力状況を出す */
-.table-answer__row.is-collapsed {
-  padding: 14px 18px 14px 0;
-}
-
-.table-answer__row.is-collapsed .table-answer__rowhead {
-  display: grid;
-  flex: 1;
-  grid-template-columns: 84px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0 18px;
-  padding: 0;
-  border-right: 0;
-}
-
-.table-answer__row.is-collapsed .table-answer__badge {
-  padding-right: 0;
-  border-right: 1px solid var(--border);
-}
-
-.table-answer__row.is-collapsed .table-answer__summary {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.table-answer__toggle[aria-expanded="true"] .icon {
+  transform: rotate(180deg);
 }
 
 .table-answer__fields {
   display: grid;
-  flex: 1;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px 14px;
-  min-width: 0;
-  padding-left: 18px;
 }
 
 .table-answer__fields[hidden] {
@@ -615,69 +621,58 @@ button:disabled {
 }
 
 @container (max-width: 599px) {
+  /* 狭い画面: 上段に番号・工程の内容・開閉ボタン、下段に入力欄を全幅で縦に並べる */
   .table-answer__row,
   .table-answer__row.is-collapsed {
-    display: block;
-    padding: 14px 14px 16px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 10px;
+    padding: 14px;
   }
 
-  /* 狭い画面では開閉どちらでも、番号・見出し・補足・入力状況を1行目に並べる */
-  .table-answer__rowhead,
-  .table-answer__row.is-collapsed .table-answer__rowhead {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 4px 10px;
-    width: 100%;
+  .table-answer__rowhead {
+    display: block;
     padding: 0;
     border-right: 0;
   }
 
-  .table-answer__row:not(.is-collapsed) .table-answer__rowhead {
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .table-answer__badge,
-  .table-answer__row.is-collapsed .table-answer__badge {
-    display: contents;
+  .table-answer__rowname {
+    display: none;
   }
 
   .table-answer__rownum {
-    grid-row: 1 / span 2;
-    grid-column: 1;
     width: 40px;
     height: 40px;
     font-size: 1.25rem;
   }
 
-  .table-answer__rowname {
-    grid-row: 1;
-    grid-column: 2;
+  .table-answer__body {
+    display: contents;
   }
 
-  .table-answer__summary,
-  .table-answer__row.is-collapsed .table-answer__summary {
-    display: flex;
-    grid-row: 2;
+  .table-answer__bar {
     grid-column: 2;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
-  .table-answer__rownote {
-    color: var(--muted);
+  .table-answer__row:not(.is-collapsed) .table-answer__bar {
+    margin-bottom: 12px;
   }
 
-  .table-answer__chevron {
-    grid-row: 1 / span 2;
-    grid-column: 3;
+  .table-answer__summary {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 0;
+  }
+
+  .table-answer__toggle {
+    align-self: flex-end;
   }
 
   .table-answer__fields {
+    grid-column: 1 / -1;
     grid-template-columns: 1fr;
-    padding-left: 0;
   }
 
   /* 16px 未満だと iOS で入力時に画面が拡大される */
