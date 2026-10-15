@@ -12,8 +12,8 @@ GitHub Pages (React + TypeScript + Vite)
    └─ 提出 ──▶ Google Apps Script(採点・保存)──▶ Google スプレッドシート ──▶ 確認者
 ```
 
-現在は**デザイン確認モード**です。トップページで 2 つのデザイン案(DESIGN 02 カード型 / DESIGN 03 モダン)を見比べられます。
-デザインを 1 つに決めたあとの切り替え方法は「[17. デザイン変更方法](#17-デザイン変更方法)」を参照してください。
+デザインは**カード型**(DESIGN 02)です。トップページから直接テストが始まります。
+見た目の調整方法は「[17. デザイン変更方法](#17-デザイン変更方法)」を参照してください。
 
 ---
 
@@ -100,7 +100,7 @@ VITE_GAS_ENDPOINT=https://script.google.com/macros/s/xxxxxxxx/exec
 - `.env` はローカル専用で、Git に含めない設定(`.gitignore`)になっています。
 - 公開版(本番ビルド)用の URL は `.env.production` に書きます。こちらは Git で管理します(手順 11)。
 - `VITE_` で始まる値はビルド後の JavaScript に埋め込まれ、誰でも見ることができます。**パスワードや秘密鍵などは絶対に入れないでください。**
-- 未設定の場合は「デモ送信」となり、提出してもスプレッドシートには保存されません(デザイン確認用)。
+- 未設定の場合は提出時にエラーになります(`designPreviewMode` が `true` のときだけ「デモ送信」になり、スプレッドシートには保存されません)。
 
 ### 9. ローカル起動
 
@@ -233,20 +233,15 @@ durationMinutes: 60,
 
 ### 17. デザイン変更方法
 
-**デザインを 1 つに決めて本番運用する場合**は、`src/config/testConfig.ts` を変更します。
+デザインはカード型(`defaultDesign: 2`)に決定しており、`src/config/testConfig.ts` の `designPreviewMode` は `false` です。トップページから直接テストが始まります。
 
-```ts
-designPreviewMode: false, // デザイン選択画面を出さない
-defaultDesign: 2,         // 使用するデザイン (2: カード型 | 3: モダン)
-```
-
-これでトップページから直接テストが始まり、「デザイン選択へ戻る」は表示されなくなります。テストの処理はそのまま使われます。
+`designPreviewMode` を `true` にすると、トップページにデザイン選択画面と「デザイン選択へ戻る」リンクが表示され、送信先が未設定でも「デモ送信」で提出まで試せます。
 
 **見た目を調整する場合**は、各デザインのフォルダだけを編集します。
 
 | 場所 | 内容 |
 |---|---|
-| `src/designs/Design02/`(カード型) `Design03/`(モダン) | 各デザインのレイアウト(`index.tsx`)と色・形(`*.css`) |
+| `src/designs/Design02/`(カード型) | レイアウト(`index.tsx`)と色・形(`design02.css`) |
 | `src/styles/base.css` | 全デザイン共通の部品(選択肢・記述欄・タイマーなど)の基本形 |
 
 色や角丸は各 CSS 先頭の変数(`--accent` `--radius` など)で変えられます。
@@ -345,9 +340,8 @@ defaultDesign: 2,         // 使用するデザイン (2: カード型 | 3: モ�
    │  ├─ questions/            ChoiceQuestion / TextQuestion / QuestionView / QuestionContent
    │  ├─ common/               確認ダイアログ・アイコン など
    │  └─ Timer / Progress / QuestionNav / AnswerSummary
-   ├─ designs/                 デザイン 2 案(UI のみ)
-   │  ├─ Design02/  カード型
-   │  └─ Design03/  モダン
+   ├─ designs/                 デザイン(UI のみ)
+   │  └─ Design02/  カード型
    ├─ pages/                   デザイン選択 / 氏名入力 / テスト / 回答確認 / 完了
    ├─ styles/                  共通 CSS
    ├─ App.tsx                  ルーティング

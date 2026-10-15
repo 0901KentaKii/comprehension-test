@@ -13,8 +13,8 @@ export const testConfig = {
    * true : トップページにデザイン選択画面を表示する (比較・検討用)
    * false: トップページから直接 defaultDesign のテストを表示する (本番運用用)
    */
-  designPreviewMode: true,
+  designPreviewMode: false,
 
-  /** designPreviewMode が false のときに使用するデザイン (2: カード型 | 3: モダン) */
-  defaultDesign: 2 as 2 | 3,
+  /** designPreviewMode が false のときに使用するデザイン (2: カード型) */
+  defaultDesign: 2 as const,
 };

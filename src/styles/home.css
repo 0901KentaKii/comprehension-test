@@ -137,8 +137,7 @@
   flex: none;
 }
 
-.thumb__row,
-.thumb__top {
+.thumb__row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -149,10 +148,6 @@
   height: 8px;
   border-radius: 4px;
   background: #b9c1cd;
-}
-
-.thumb__line--title {
-  width: 38%;
 }
 
 .thumb__line--q {
@@ -225,67 +220,6 @@
 .thumb__btn--on {
   flex: 1.6 !important;
   background: #0b6b5d;
-}
-
-/* 03: 上部に問題一覧の帯 */
-.thumb--3 {
-  gap: 0;
-  padding: 0;
-  background: #f1f4f9;
-}
-
-.thumb__top {
-  padding: 10px 14px;
-  border-bottom: 1px solid #d8deea;
-  background: #fff;
-}
-
-.thumb--3 .thumb__pill {
-  background: #1d4ed8;
-}
-
-.thumb__strip {
-  display: flex;
-  gap: 5px;
-  padding: 8px 14px;
-  border-bottom: 1px solid #d8deea;
-  background: #fff;
-}
-
-.thumb__dot {
-  flex: 1 !important;
-  height: 14px;
-  border-radius: 3px;
-  background: #dfe4ea;
-}
-
-.thumb__dot--done {
-  background: #7cc3a2;
-}
-
-.thumb__dot--on {
-  background: #1d4ed8;
-}
-
-.thumb__main {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 6px;
-  margin: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: #fff;
-}
-
-.thumb--3 .thumb__opt {
-  border-color: #d8deea;
-  border-radius: 5px;
-}
-
-.thumb--3 .thumb__opt--on {
-  border-color: #1d4ed8;
-  background: #e8effd;
 }
 
 @media (max-width: 860px) {

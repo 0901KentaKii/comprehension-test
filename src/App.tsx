@@ -6,10 +6,10 @@ import { TestFlowPage } from "./pages/TestFlowPage";
 /**
  * ルーティング。
  *   /            デザイン選択 (designPreviewMode が false の場合は defaultDesign のテスト)
- *   /design/1〜3 各デザインのテスト画面
+ *   /design/2    カード型のテスト画面 (designPreviewMode が true の場合のみ)
  *
  * GitHub Pages はサーバー側のURL書き換えができないため HashRouter を使用する
- * (URLは …/#/design/1 の形式になり、リロードしても 404 にならない)。
+ * (URLは …/#/design/2 の形式になり、リロードしても 404 にならない)。
  */
 export default function App() {
   return (

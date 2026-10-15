@@ -27,7 +27,7 @@ export interface FrameProps {
 
 /** デザイン1案分の定義。UI だけを持ち、テストのロジックは共通のものを使う */
 export interface DesignKit {
-  id: 2 | 3;
+  id: 2;
   name: string;
   description: string;
   /** デザインごとの CSS を適用するためのクラス名 */

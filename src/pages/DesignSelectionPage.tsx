@@ -6,43 +6,18 @@ import "../styles/home.css";
 
 /** 各デザインのレイアウトを表す小さな模式図 */
 function Thumbnail({ id }: { id: number }) {
-  if (id === 2) {
-    return (
-      <div className="thumb thumb--2" aria-hidden="true">
-        <i className="thumb__pill thumb__pill--center" />
-        <div className="thumb__card">
-          <i className="thumb__line thumb__line--q" />
-          <i className="thumb__opt" />
-          <i className="thumb__opt thumb__opt--on" />
-          <i className="thumb__opt" />
-        </div>
-        <div className="thumb__row">
-          <i className="thumb__btn" />
-          <i className="thumb__btn thumb__btn--on" />
-        </div>
-      </div>
-    );
-  }
   return (
-    <div className="thumb thumb--3" aria-hidden="true">
-      <div className="thumb__top">
-        <i className="thumb__line thumb__line--title" />
-        <i className="thumb__pill" />
-      </div>
-      <div className="thumb__strip">
-        <i className="thumb__dot thumb__dot--done" />
-        <i className="thumb__dot thumb__dot--done" />
-        <i className="thumb__dot thumb__dot--on" />
-        <i className="thumb__dot" />
-        <i className="thumb__dot" />
-        <i className="thumb__dot" />
-        <i className="thumb__dot" />
-        <i className="thumb__dot" />
-      </div>
-      <div className="thumb__main">
+    <div className={`thumb thumb--${id}`} aria-hidden="true">
+      <i className="thumb__pill thumb__pill--center" />
+      <div className="thumb__card">
         <i className="thumb__line thumb__line--q" />
         <i className="thumb__opt" />
         <i className="thumb__opt thumb__opt--on" />
+        <i className="thumb__opt" />
+      </div>
+      <div className="thumb__row">
+        <i className="thumb__btn" />
+        <i className="thumb__btn thumb__btn--on" />
       </div>
     </div>
   );
@@ -89,7 +64,7 @@ export function DesignSelectionPage() {
 
       <footer className="home__footer">
         <p>
-          どちらの案も、問題・回答・タイマー・保存・提出の仕組みは共通です。違いは見た目とレイアウトだけなので、途中でデザインを切り替えても回答は引き継がれます。
+          問題・回答・タイマー・保存・提出の仕組みはデザインと分離されています。
         </p>
       </footer>
     </div>
