@@ -60,3 +60,9 @@ export const AlertIcon = (p: IconProps) => (
     <path d="M12 10v4.5M12 17.2v.01" />
   </Svg>
 );
+
+export const ChevronDownIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6 9l6 6 6-6" />
+  </Svg>
+);

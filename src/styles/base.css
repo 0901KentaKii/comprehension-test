@@ -401,12 +401,37 @@ button:disabled {
 
 /* ---------- 記述式 (表形式の回答欄) ---------- */
 
-/* 行ごとに1枚のカード。左に行見出し (工程 + 番号)、右に入力欄 */
+/* 行ごとに1枚のカード。左に行見出し (工程 + 番号)、右に入力欄。行見出しのボタンでたためる */
 .table-answer {
   display: grid;
   gap: 14px;
   /* 画面幅ではなく回答欄そのものの幅で、横並び / 縦並びを切り替える */
   container-type: inline-size;
+}
+
+.table-answer__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.table-answer__bulk {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.table-answer__bulk:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+.table-answer__bulk:disabled {
+  color: var(--muted);
+  opacity: 0.6;
 }
 
 .table-answer__row {
@@ -422,9 +447,19 @@ button:disabled {
   flex: 0 0 84px;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding-top: 4px;
+  gap: 10px;
+  padding: 4px 0 0;
+  border: 0;
   border-right: 1px solid var(--border);
+  background: none;
+  text-align: left;
+}
+
+.table-answer__badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
 .table-answer__rowname {
@@ -446,9 +481,86 @@ button:disabled {
   font-variant-numeric: tabular-nums;
 }
 
-/* 横並びのときは行の補足 (工程の内容) を出さない。上の問題文の表で確認できる */
-.table-answer__rownote {
+/* 開いているときは補足 (工程の内容) と入力状況を出さない。上の問題文の表で確認できる */
+.table-answer__summary {
   display: none;
+}
+
+.table-answer__rownote {
+  color: var(--text);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.table-answer__status {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.table-answer__status--empty {
+  background: #f0f2f5;
+  color: var(--muted);
+}
+
+.table-answer__status--partial {
+  background: #fff8e1;
+  color: #6f4a00;
+}
+
+.table-answer__status--done {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.table-answer__chevron {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.table-answer__chevron .icon {
+  transition: transform 0.15s;
+}
+
+.table-answer__rowhead[aria-expanded="false"] .table-answer__chevron .icon {
+  transform: rotate(-90deg);
+}
+
+.table-answer__rowhead:hover .table-answer__chevron {
+  color: var(--accent);
+}
+
+/* たたんだカード: 見出しのボタンが横いっぱいに広がり、補足と入力状況を出す */
+.table-answer__row.is-collapsed {
+  padding: 14px 18px 14px 0;
+}
+
+.table-answer__row.is-collapsed .table-answer__rowhead {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 84px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0 18px;
+  padding: 0;
+  border-right: 0;
+}
+
+.table-answer__row.is-collapsed .table-answer__badge {
+  padding-right: 0;
+  border-right: 1px solid var(--border);
+}
+
+.table-answer__row.is-collapsed .table-answer__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .table-answer__fields {
@@ -458,6 +570,10 @@ button:disabled {
   gap: 12px 14px;
   min-width: 0;
   padding-left: 18px;
+}
+
+.table-answer__fields[hidden] {
+  display: none;
 }
 
 .table-answer__field {
@@ -499,20 +615,33 @@ button:disabled {
 }
 
 @container (max-width: 599px) {
-  .table-answer__row {
+  .table-answer__row,
+  .table-answer__row.is-collapsed {
     display: block;
     padding: 14px 14px 16px;
   }
 
-  .table-answer__rowhead {
+  /* 狭い画面では開閉どちらでも、番号・見出し・補足・入力状況を1行目に並べる */
+  .table-answer__rowhead,
+  .table-answer__row.is-collapsed .table-answer__rowhead {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 2px 10px;
-    margin-bottom: 12px;
-    padding: 0 0 12px;
+    gap: 4px 10px;
+    width: 100%;
+    padding: 0;
     border-right: 0;
+  }
+
+  .table-answer__row:not(.is-collapsed) .table-answer__rowhead {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
+  }
+
+  .table-answer__badge,
+  .table-answer__row.is-collapsed .table-answer__badge {
+    display: contents;
   }
 
   .table-answer__rownum {
@@ -524,15 +653,26 @@ button:disabled {
   }
 
   .table-answer__rowname {
+    grid-row: 1;
     grid-column: 2;
   }
 
-  .table-answer__rownote {
-    display: block;
+  .table-answer__summary,
+  .table-answer__row.is-collapsed .table-answer__summary {
+    display: flex;
+    grid-row: 2;
     grid-column: 2;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .table-answer__rownote {
     color: var(--muted);
-    font-size: 0.9375rem;
-    line-height: 1.6;
+  }
+
+  .table-answer__chevron {
+    grid-row: 1 / span 2;
+    grid-column: 3;
   }
 
   .table-answer__fields {
