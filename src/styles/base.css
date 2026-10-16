@@ -504,10 +504,17 @@ button:disabled {
   padding-top: 4px;
 }
 
+.table-answer__rowtitle,
 .table-answer__rownote {
   font-size: 0.9375rem;
   font-weight: 700;
   line-height: 1.6;
+}
+
+/* 見出しがある行では、補足は見出しの後ろに控えめに出す */
+.table-answer__rowtitle + .table-answer__rownote {
+  color: var(--muted);
+  font-weight: 400;
 }
 
 .table-answer__status {
@@ -589,6 +596,51 @@ button:disabled {
 
 .table-answer__field--wide {
   grid-column: 1 / -1;
+}
+
+/* 選択肢から1つを選ぶ欄 (例: 必須 / 任意) */
+.table-answer__options {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.table-answer__option-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.table-answer__option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 16px 6px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.table-answer__option:has(.table-answer__option-input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.table-answer__option:has(.table-answer__option-input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.table-answer__option-input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
 }
 
 .table-answer__label {

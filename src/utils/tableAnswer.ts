@@ -35,7 +35,7 @@ export function serializeTableAnswer(cells: string[][]): string {
 /**
  * 送信用の文章にする (Spreadsheet の1セルにそのまま入り、人が読める形)。
  *
- *   工程1
+ *   工程1            (title がある行は「要素1 目的」)
  *   AI：…
  *   人：…
  */
@@ -45,7 +45,7 @@ export function formatTableAnswer(value: string, table: AnswerTable): string {
   return table.rows
     .map((row, r) =>
       [
-        `${table.rowHeader}${row.label}`,
+        `${table.rowHeader}${row.label}${row.title ? ` ${row.title}` : ""}`,
         ...table.columns.map((col, c) => `${col.label}：${cells[r][c].trim()}`),
       ].join("\n"),
     )

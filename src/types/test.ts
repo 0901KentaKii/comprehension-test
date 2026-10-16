@@ -26,10 +26,27 @@ export type QuestionBody = string | ContentBlock[];
 export interface AnswerTable {
   /** 行見出しの列名 (例: "工程") */
   rowHeader: string;
-  /** label は行の名前 (例: "1")。note は狭い画面で行見出しに添える補足 (例: 工程の内容) */
-  rows: { label: string; note?: string }[];
-  /** 入力欄の列。wide を付けると幅を広く取る */
-  columns: { label: string; maxLength: number; wide?: boolean }[];
+  /**
+   * label は行の名前 (例: "1")。title は行の見出し (例: 要素名)、note は行の補足 (例: 工程の内容)。
+   * title・note はカード上部に表示する
+   */
+  rows: { label: string; title?: string; note?: string }[];
+  /** 入力欄の列 */
+  columns: AnswerTableColumn[];
+}
+
+export interface AnswerTableColumn {
+  label: string;
+  maxLength: number;
+  /** 幅を広く取る (カードの下段に全幅で置く) */
+  wide?: boolean;
+  /** 指定すると、文章ではなくこの中から1つを選ぶ欄になる */
+  options?: string[];
+  /**
+   * 指定すると、同じ行の別の列が equals の値のときだけ、入力状況の「必要な欄」として数える
+   * (例: 「必須」を選んだ要素だけ内容の記入が必要)
+   */
+  requiredWhen?: { column: number; equals: string };
 }
 
 /** 問題データ。選択式・記述式を共通の配列で管理する。 */
